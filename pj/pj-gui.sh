@@ -2,7 +2,7 @@
 # pj-gui: Fast, minimal popup launcher for pj
 set -euo pipefail
 
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH"
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 CONFIG_FILE="$SCRIPT_DIR/popup.toml"
@@ -16,14 +16,21 @@ alacritty \
   --config-file "$CONFIG_FILE" \
   --class "pj-popup,pj-popup" \
   --title "Project Jumper" \
-  -e bash -c "pj-cli > '$TMP_TARGET'"
+  -e bash -c "PJ_ACTIONS=1 pj-cli > '$TMP_TARGET'"
 
-# If target selected, launch terminal directly inside it
+# If target selected, launch the chosen tool inside it
 if [[ -s "$TMP_TARGET" ]]; then
-  TARGET="$(<"$TMP_TARGET")"
+  mapfile -t LINES < "$TMP_TARGET"
+  KEY="${LINES[0]:-}"
+  TARGET="${LINES[1]:-}"
   if [[ -n "$TARGET" && -d "$TARGET" ]]; then
     pj-cli touch "$TARGET"
-    alacritty --working-directory "$TARGET" &
+    case "$KEY" in
+      alt-a) alacritty --working-directory "$TARGET" -e agy & ;;
+      alt-o) alacritty --working-directory "$TARGET" -e opencode & ;;
+      alt-d) dolphin "$TARGET" & ;;
+      *) alacritty --working-directory "$TARGET" & ;;
+    esac
     disown
   fi
 fi

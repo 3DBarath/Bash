@@ -74,7 +74,18 @@ Because a child process cannot change its parent shell's working directory, thin
 - **Script**: `Documents/Bash/pj/pj-gui.sh` -> `~/.local/bin/pj-gui`
 - **Config**: `Documents/Bash/pj/popup.toml` (borderless Alacritty floating profile)
 - **Desktop Entry**: `~/.local/share/applications/pj.desktop`
-- **Keybinding**: Bind `pj.desktop` to a global shortcut (e.g., `Meta+P`) in KDE System Settings. Selecting a project spawns Alacritty directly inside that folder.
+- **Keybinding**: Bind `pj.desktop` to a global shortcut (e.g., `Meta+P`) in KDE System Settings.
+
+In the popup picker, hold Alt with a key to start a tool in the selected project:
+
+| Key | Action |
+| --- | --- |
+| `Enter` | Open a plain Alacritty window |
+| `Alt+A` | Start `agy` in Alacritty |
+| `Alt+O` | Start `opencode` in Alacritty |
+| `Alt+D` | Open the folder in Dolphin |
+
+Plain `a`, `o`, and `d` stay available for filtering the list.
 
 ### 4. Storage Location
 Project paths are saved to standard XDG data directory:

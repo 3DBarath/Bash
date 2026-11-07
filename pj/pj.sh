@@ -4,6 +4,7 @@ set -euo pipefail
 
 PJ_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/pj"
 PJ_FILE="$PJ_DATA_DIR/projects"
+PJ_ACTIONS="${PJ_ACTIONS:-0}"
 
 mkdir -p "$PJ_DATA_DIR"
 touch "$PJ_FILE"
@@ -126,6 +127,11 @@ case "${1:-}" in
     fi
 
     # Read MRU list directly (preserving file order)
+    expect_args=()
+    if [[ "$PJ_ACTIONS" == "1" ]]; then
+      expect_args=(--expect=alt-a,alt-o,alt-d)
+    fi
+
     selection=$(awk -v home="$HOME" '{
       orig = $0
       rel = $0
@@ -146,12 +152,23 @@ case "${1:-}" in
       --color='border:#5e6378,prompt:#a594fd,pointer:#bb9af7' \
       --preview='ls -la --color=always {2} 2>/dev/null' \
       --preview-window=right:45%:hidden \
-      --bind='?:toggle-preview') || exit 0
+      --bind='?:toggle-preview' \
+      "${expect_args[@]}") || exit 0
+
+    key=""
+    if [[ "$PJ_ACTIONS" == "1" ]]; then
+      key="${selection%%$'\n'*}"
+      selection="${selection#*$'\n'}"
+    fi
 
     target=$(printf "%s" "$selection" | cut -f2)
     if [[ -n "$target" && -d "$target" ]]; then
       touch_mru "$target"
-      printf "%s\n" "$target"
+      if [[ "$PJ_ACTIONS" == "1" ]]; then
+        printf "%s\n%s\n" "$key" "$target"
+      else
+        printf "%s\n" "$target"
+      fi
     elif [[ -n "$target" ]]; then
       printf "${ERROR}✕ Directory not found:${RESET} %s\n" "$target" >&2
     fi
