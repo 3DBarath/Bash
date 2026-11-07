@@ -105,12 +105,7 @@ case "${1:-}" in
 
   gui)
     # Floating popup launcher (can be called by KDE global shortcut)
-    target=$(pj-cli) || exit 0
-    if [[ -n "$target" && -d "$target" ]]; then
-      pj-cli touch "$target"
-      # Open Alacritty in the selected project
-      nohup alacritty --working-directory "$target" >/dev/null 2>&1 &
-    fi
+    exec "${PJ_GUI:-pj-gui}"
     ;;
 
   -h|--help|help)
