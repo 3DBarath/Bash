@@ -2,12 +2,15 @@
 decorations = "None"
 startup_mode = "Windowed"
 opacity = 0.98
-blur = true
+blur = false
 padding = { x = 6, y = 6 }
 
 [window.dimensions]
 columns = 68
 lines = 15
+
+[scrolling]
+history = 0
 
 [font]
 size = 13.0
